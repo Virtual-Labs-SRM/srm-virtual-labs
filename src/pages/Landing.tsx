@@ -240,7 +240,11 @@ export default function Landing() {
               <div className="flex items-center justify-between h-16 sm:h-20">
                 <div className="flex items-center gap-3 sm:gap-6">
                   <Link to="/">
-                    <SRMLogo />
+                    <img
+                      src={`${import.meta.env.BASE_URL}srmvl-logo.png`}
+                      alt="SRM Virtual Labs"
+                      className="h-9 w-auto object-contain"
+                    />
                   </Link>
                   <div className="hidden md:flex items-center gap-4 border-l border-border pl-6">
                     <div className="flex flex-col">
@@ -522,31 +526,28 @@ export default function Landing() {
           {/* Footer */}
           <footer className="py-12 border-t border-border bg-background">
             <div className="container mx-auto px-4 text-center text-muted-foreground text-sm">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-8 max-w-4xl mx-auto">
-                {/* Left: Official SRM Logo */}
-                <div className="flex flex-col items-center md:items-start gap-2">
+              <div className="flex flex-col items-center gap-6 mb-8 max-w-4xl mx-auto">
+                <div className="flex items-center gap-8 justify-center">
+                  {/* Official SRM Logo */}
                   <img
                     src={`${import.meta.env.BASE_URL}srm-official-logo.jpg`}
                     alt="SRM Institute of Science and Technology"
                     className="h-16 w-auto mix-blend-multiply dark:mix-blend-normal"
                   />
-                  <div className="text-center md:text-left">
-                    <p className="font-bold text-foreground">SRM Institute of Science and Technology</p>
-                    <p className="text-xs">University</p>
-                  </div>
-                </div>
 
-                {/* Right: SRM Virtual Lab Logo */}
-                <div className="flex flex-col items-center md:items-end gap-2">
+                  {/* Divider */}
+                  <div className="h-12 w-px bg-border" />
+
+                  {/* SRM Virtual Lab Logo */}
                   <img
                     src={`${import.meta.env.BASE_URL}srmvl-logo.png`}
                     alt="SRM Virtual Labs"
                     className="h-12 w-auto"
                   />
-                  <div className="text-center md:text-right">
-                    <p className="font-bold text-foreground">Department of Computational Intelligence</p>
-                    <p className="text-xs">Virtual Laboratory</p>
-                  </div>
+                </div>
+
+                <div className="text-center">
+                  <p className="font-bold text-foreground text-lg">Department of Computational Intelligence</p>
                 </div>
               </div>
               <p>© {new Date().getFullYear()} SRM Institute of Science and Technology. All rights reserved.</p>

@@ -45,9 +45,9 @@ export function AppSidebar() {
       <SidebarHeader className="border-b border-border p-2">
         <Link to="/" className="flex items-center gap-2 group px-1">
           <img
-            src={`${import.meta.env.BASE_URL}srmvl-logo.png`}
+            src={`${import.meta.env.BASE_URL}${collapsed ? 'srmvl-logo-only.png' : 'srmvl-logo.png'}`}
             alt="SRM Virtual Labs"
-            className="h-10 w-auto shrink-0 object-contain group-hover:scale-105 transition-transform duration-200"
+            className={`shrink-0 object-contain transition-all duration-200 ${collapsed ? "h-8 w-8" : "h-10 w-auto group-hover:scale-105"}`}
           />
         </Link>
       </SidebarHeader>
