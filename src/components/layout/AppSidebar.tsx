@@ -45,18 +45,10 @@ export function AppSidebar() {
       <SidebarHeader className="border-b border-border p-2">
         <Link to="/" className="flex items-center gap-2 group px-1">
           <img
-            src={`${import.meta.env.BASE_URL}logo.png`}
-            alt="SRM Logo"
-            className="h-12 w-12 shrink-0 object-contain group-hover:scale-110 transition-transform duration-200"
+            src={`${import.meta.env.BASE_URL}srmvl-logo.png`}
+            alt="SRM Virtual Labs"
+            className="h-10 w-auto shrink-0 object-contain group-hover:scale-105 transition-transform duration-200"
           />
-          {!collapsed && (
-            <div className="flex flex-col leading-tight">
-              <span className="text-lg font-bold text-blue-800 tracking-tight">SRM</span>
-              <span className="text-[10px] text-foreground font-bold -mt-0.5">
-                Virtual Labs
-              </span>
-            </div>
-          )}
         </Link>
       </SidebarHeader>
 

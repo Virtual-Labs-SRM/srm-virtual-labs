@@ -522,9 +522,32 @@ export default function Landing() {
           {/* Footer */}
           <footer className="py-12 border-t border-border bg-background">
             <div className="container mx-auto px-4 text-center text-muted-foreground text-sm">
-              <div className="flex flex-col items-center gap-4 mb-8">
-                <SRMLogo className="scale-125 mb-2" />
-                <p className="font-bold text-lg text-foreground">Department of Computational Intelligence</p>
+              <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-8 max-w-4xl mx-auto">
+                {/* Left: Official SRM Logo */}
+                <div className="flex flex-col items-center md:items-start gap-2">
+                  <img
+                    src={`${import.meta.env.BASE_URL}srm-official-logo.jpg`}
+                    alt="SRM Institute of Science and Technology"
+                    className="h-16 w-auto mix-blend-multiply dark:mix-blend-normal"
+                  />
+                  <div className="text-center md:text-left">
+                    <p className="font-bold text-foreground">SRM Institute of Science and Technology</p>
+                    <p className="text-xs">University</p>
+                  </div>
+                </div>
+
+                {/* Right: SRM Virtual Lab Logo */}
+                <div className="flex flex-col items-center md:items-end gap-2">
+                  <img
+                    src={`${import.meta.env.BASE_URL}srmvl-logo.png`}
+                    alt="SRM Virtual Labs"
+                    className="h-12 w-auto"
+                  />
+                  <div className="text-center md:text-right">
+                    <p className="font-bold text-foreground">Department of Computational Intelligence</p>
+                    <p className="text-xs">Virtual Laboratory</p>
+                  </div>
+                </div>
               </div>
               <p>© {new Date().getFullYear()} SRM Institute of Science and Technology. All rights reserved.</p>
             </div>
