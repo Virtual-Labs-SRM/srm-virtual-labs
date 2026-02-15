@@ -68,7 +68,7 @@ export function TestingOntologyLab() {
       experimentNumber={11}
       title="Software Testing Ontology"
       subtitle="Testing Ontology for AI-Based Systems"
-      icon="Network"
+      icon="Bug"
       duration="~45 minutes"
       difficulty="Intermediate"
       tags={['Ontology', 'Software Testing', 'AI Systems', 'RDF']}

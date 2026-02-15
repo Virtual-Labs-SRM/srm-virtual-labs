@@ -142,7 +142,7 @@ export function ExpertMatchingLab() {
   return (
     <ExperimentLayout
       experimentNumber={10}
-      title="Ontology-Based Expert Matching"
+      title="Domain Expert Matching"
       subtitle="Semantic Knowledge Representation and Retrieval"
       icon="Network"
       duration="~45 minutes"

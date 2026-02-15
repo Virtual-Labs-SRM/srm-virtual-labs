@@ -578,7 +578,7 @@ export function CollegeSelectionLab() {
   return (
     <ExperimentLayout
       experimentNumber={12}
-      title="Fuzzy College Selection"
+      title="Fuzzy College Selection System"
       subtitle="Gamified recommendation system using fuzzy logic"
       icon="GraduationCap"
       duration="~30 minutes"

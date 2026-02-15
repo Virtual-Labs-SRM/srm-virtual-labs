@@ -80,9 +80,9 @@ export function FuzzyShapeMatchingLab() {
   return (
     <ExperimentLayout
       experimentNumber={4}
-      title="Fuzzy Logic Pattern Recognition"
+      title="Fuzzy Set for Shape Matching"
       subtitle="Handwritten digit recognition using fuzzy set theory"
-      icon="Scan"
+      icon="Shapes"
       duration="~30 minutes"
       difficulty="Intermediate"
       tags={['Fuzzy Logic', 'Computer Vision', 'Pattern Recognition']}

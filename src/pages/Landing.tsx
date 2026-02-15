@@ -276,14 +276,14 @@ export default function Landing() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <Badge variant="secondary" className="px-4 py-2 text-sm font-medium border-primary/20 bg-primary/5 text-primary mb-6">
+                <Badge variant="secondary" className="px-4 py-2 text-sm font-medium border-primary/20 bg-primary/5 text-primary mb-6 hover:shadow-lg hover:shadow-primary/40 hover:bg-primary/10 transition-all duration-300 cursor-default">
                   <Sparkles className="w-4 h-4 mr-2" />
                   Next-Gen Virtual Laboratory
                 </Badge>
               </motion.div>
 
               <motion.h1
-                className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-foreground max-w-5xl mx-auto leading-[1.1]"
+                className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-foreground max-w-5xl mx-auto leading-[1.1] mb-8"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
@@ -508,10 +508,10 @@ export default function Landing() {
               </div>
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                 {learningOutcomes.map((outcome, i) => (
-                  <Card key={i} className="bg-card hover:bg-accent/50 transition-colors border-border/50">
+                  <Card key={i} className="bg-card/50 backdrop-blur-sm hover:shadow-xl hover:border-primary/50 transition-all duration-300 border-border/50 group">
                     <CardContent className="p-6 flex flex-col gap-4">
-                      <outcome.icon className="w-8 h-8 text-primary mb-2" />
-                      <p className="font-medium text-foreground">{outcome.text}</p>
+                      <outcome.icon className="w-8 h-8 text-primary mb-2 group-hover:scale-110 transition-transform duration-300" />
+                      <p className="font-medium text-foreground group-hover:text-primary transition-colors">{outcome.text}</p>
                     </CardContent>
                   </Card>
                 ))}

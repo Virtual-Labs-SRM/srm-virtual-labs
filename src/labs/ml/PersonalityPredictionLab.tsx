@@ -2630,7 +2630,7 @@ export function PersonalityPredictionLab() {
       experimentNumber={8}
       title="CV-Based Personality Prediction"
       subtitle="Predict Personality Traits from CV Analysis using NLP"
-      icon="BookOpen"
+      icon="UserSearch"
       duration="~45 minutes"
       difficulty="Intermediate"
       tags={['NLP', 'Big Five', 'OCEAN', 'CV Analysis']}
