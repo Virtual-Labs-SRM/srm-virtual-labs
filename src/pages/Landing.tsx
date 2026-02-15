@@ -311,11 +311,19 @@ export default function Landing() {
                     Start Exploring <ArrowRight className="h-5 w-5" />
                   </Button>
                 </Link>
-                <a href="#syllabus">
-                  <Button variant="outline" size="lg" className="h-14 px-8 text-lg gap-2 rounded-full border-2">
-                    <BookText className="h-5 w-5" /> View Syllabus
-                  </Button>
-                </a>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="h-14 px-8 text-lg gap-2 rounded-full border-2"
+                  onClick={() => {
+                    const element = document.getElementById('syllabus');
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                >
+                  <BookText className="h-5 w-5" /> View Syllabus
+                </Button>
               </motion.div>
 
               <motion.div
