@@ -48,7 +48,7 @@ const SRMLogo = ({
   <div className={`flex items-center ${gapClassName} ${className}`}>
     <div className="relative flex-shrink-0">
       <img
-        src="/logo.png"
+        src={`${import.meta.env.BASE_URL}logo.png`}
         alt="SRM Logo"
         className={`object-contain ${imgClassName}`}
       />

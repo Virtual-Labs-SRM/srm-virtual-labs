@@ -26,7 +26,7 @@ const OpeningAnimation = ({ onComplete }: { onComplete: () => void }) => {
                 className="flex flex-col items-center"
             >
                 <motion.img
-                    src="/logo.png"
+                    src={`${import.meta.env.BASE_URL}logo.png`}
                     alt="SRM Logo"
                     className="w-32 h-32 mb-4"
                     initial={{ y: 20 }}
