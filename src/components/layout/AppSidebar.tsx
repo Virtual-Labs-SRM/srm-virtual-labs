@@ -169,7 +169,7 @@ export function AppSidebar() {
                                       name={subModule.icon}
                                       className={cn(
                                         "h-3 w-3 mr-2 transition-colors",
-                                        subActive ? "text-white" : "text-foreground group-hover/sub:text-white"
+                                        subActive ? "text-white" : "!text-current !opacity-70 group-hover/sub:!text-white !opacity-100"
                                       )}
                                     />
                                     <span className="truncate">{subModule.title}</span>
