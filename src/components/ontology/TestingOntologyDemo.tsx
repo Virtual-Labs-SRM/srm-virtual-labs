@@ -546,14 +546,16 @@ export function TestingOntologyDemo() {
         <h2 className="text-2xl font-bold">Software Testing Ontology for AI Systems</h2>
         <div className="flex flex-wrap items-center gap-2">
 
-          <Button
-            size="sm"
-            onClick={startBuildMode}
-            className="gradient-primary shadow-lg text-white hover:opacity-90 transition-all hover:scale-105 border-none"
-          >
-            <Play className="h-4 w-4 mr-2" />
-            Build Ontology
-          </Button>
+          {!buildMode && (
+            <Button
+              size="sm"
+              onClick={startBuildMode}
+              className="gradient-primary shadow-lg text-white hover:opacity-90 transition-all hover:scale-105 border-none"
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Build Ontology
+            </Button>
+          )}
 
           {buildMode && (
             <Button
@@ -874,17 +876,31 @@ export function TestingOntologyDemo() {
                                 : '#d8b4fe'  // softer purple
                           }
                         />
-                        <text
-                          x={node.x}
-                          y={node.y + 5}
-                          textAnchor="middle"
-                          fontSize="11"
-                          fill="#1f2937"
-                          fontWeight="600"
-                          pointerEvents="none"
+                        <foreignObject
+                          x={node.x - 50}
+                          y={node.y - 25}
+                          width={100}
+                          height={50}
+                          style={{ pointerEvents: 'none' }}
                         >
-                          {node.label}
-                        </text>
+                          <div
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              textAlign: 'center',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                              color: '#1f2937',
+                              padding: '2px',
+                              lineHeight: '1.2'
+                            }}
+                          >
+                            {node.label}
+                          </div>
+                        </foreignObject>
                       </g>
                     ))}
 
@@ -905,8 +921,8 @@ export function TestingOntologyDemo() {
                           <div
                             key={index}
                             className={`px-2 py-1 rounded ${activePseudoLine === index
-                                ? 'bg-yellow-200 text-black'
-                                : 'text-muted-foreground'
+                              ? 'bg-yellow-200 text-black'
+                              : 'text-muted-foreground'
                               }`}
                           >
                             {line}

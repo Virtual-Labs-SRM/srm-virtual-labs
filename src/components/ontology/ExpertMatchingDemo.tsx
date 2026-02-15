@@ -694,19 +694,32 @@ export function ExpertMatchingDemo() {
 
         <div className="flex items-center gap-3">
 
-          <Button
-            className="gap-2 gradient-primary shadow-lg text-white hover:opacity-90 transition-all hover:scale-105"
-            onClick={() => {
-              resetTraversal();
-              setNodes([]);
-              setEdges([]);
-              setBuildMode(true);
-              setBuildStep(1);
-            }}
-          >
-            <Play className="h-4 w-4" />
-            Build Ontology
-          </Button>
+          {!buildMode ? (
+            <Button
+              className="gap-2 gradient-primary shadow-lg text-white hover:opacity-90 transition-all hover:scale-105"
+              onClick={() => {
+                resetTraversal();
+                setNodes([]);
+                setEdges([]);
+                setBuildMode(true);
+                setBuildStep(1);
+              }}
+            >
+              <Play className="h-4 w-4" />
+              Build Ontology
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => {
+                setBuildMode(false);
+                loadClassicAI(); // Reset to default view on exit
+              }}
+            >
+              Exit Build Mode
+            </Button>
+          )}
 
 
 
@@ -1067,8 +1080,8 @@ export function ExpertMatchingDemo() {
                           <div
                             key={index}
                             className={`px-2 py-1 rounded ${activePseudoLine === index
-                                ? 'bg-yellow-200 text-black'
-                                : 'text-muted-foreground'
+                              ? 'bg-yellow-200 text-black'
+                              : 'text-muted-foreground'
                               }`}
                           >
                             {line}
@@ -1157,8 +1170,8 @@ export function ExpertMatchingDemo() {
                     <div
                       key={i}
                       className={`px-2 py-1 rounded ${active
-                          ? "bg-yellow-200 text-black"
-                          : "text-muted-foreground"
+                        ? "bg-yellow-200 text-black"
+                        : "text-muted-foreground"
                         }`}
                     >
                       {line}

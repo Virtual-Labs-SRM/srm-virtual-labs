@@ -26,9 +26,9 @@ All colors MUST be HSL.
     --primary-light: 239 84% 74%;
     --primary-dark: 239 84% 58%;
 
-    --secondary: 160 84% 39%;
+    --secondary: 142 76% 36%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-dark: 160 84% 30%;
+    --secondary-dark: 142 76% 29%;
 
     --accent: 38 92% 50%;
     --accent-foreground: 0 0% 100%;
@@ -61,8 +61,8 @@ All colors MUST be HSL.
     /* Gradients (defined as HSL-compatible values) */
     --gradient-primary-from: 239 84% 67%;
     --gradient-primary-to: 270 76% 60%;
-    --gradient-secondary-from: 160 84% 39%;
-    --gradient-secondary-to: 187 96% 42%;
+    --gradient-secondary-from: 260 84% 60%;
+    --gradient-secondary-to: 280 96% 60%;
     --gradient-hero-from: 239 47% 21%;
     --gradient-hero-via: 239 47% 34%;
     --gradient-hero-to: 270 47% 30%;
@@ -120,7 +120,7 @@ All colors MUST be HSL.
     --primary-light: 239 84% 74%;
     --primary-dark: 239 84% 58%;
 
-    --secondary: 160 84% 50%;
+    --secondary: 142 70% 45%;
     --secondary-foreground: 222 47% 8%;
 
     --accent: 38 92% 50%;
@@ -174,15 +174,16 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+
   /* Gradient utilities */
   .gradient-primary {
     @apply bg-gradient-to-br from-primary to-[hsl(var(--gradient-primary-to))];
   }
-  
+
   .gradient-secondary {
     @apply bg-gradient-to-br from-secondary to-[hsl(var(--gradient-secondary-to))];
   }
-  
+
   .gradient-hero {
     @apply bg-gradient-to-br from-[hsl(var(--gradient-hero-from))] via-[hsl(var(--gradient-hero-via))] to-[hsl(var(--gradient-hero-to))];
   }
@@ -204,10 +205,17 @@ All colors MUST be HSL.
 
   /* Animation for floating elements */
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
   }
-  
+
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }

@@ -105,9 +105,8 @@ export function ExpertMatchingCanvas({
         return (
           <g
             key={node.id}
-            transform={`translate(${node.x - width / 2}, ${
-              node.y - height / 2
-            })`}
+            transform={`translate(${node.x - width / 2}, ${node.y - height / 2
+              })`}
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation();
@@ -124,16 +123,31 @@ export function ExpertMatchingCanvas({
               stroke="#334155"
               strokeWidth={state === 'current' ? 2.5 : 1.5}
             />
-            <text
-              x={width / 2}
-              y={height / 2 + 4}
-              textAnchor="middle"
-              fontSize="13"
-              fontWeight={state !== 'unvisited' ? '600' : '400'}
-              fill="#0f172a"
+            <foreignObject
+              x={0}
+              y={0}
+              width={width}
+              height={height}
+              style={{ pointerEvents: 'none' }}
             >
-              {node.label}
-            </text>
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  fontSize: '13px',
+                  fontWeight: state !== 'unvisited' ? '600' : '400',
+                  color: '#0f172a',
+                  padding: '2px',
+                  lineHeight: '1.2',
+                }}
+              >
+                {node.label}
+              </div>
+            </foreignObject>
           </g>
         );
       })}

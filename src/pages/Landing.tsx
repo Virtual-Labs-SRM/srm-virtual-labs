@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MODULES } from '@/data/modules';
@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/collapsible';
 import {
   BookOpen,
-  GraduationCap,
   Beaker,
   ArrowRight,
   Brain,
@@ -23,9 +22,12 @@ import {
   Code,
   Sparkles,
   ChevronDown,
-  BookText
+  BookText,
+  Cpu
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import OpeningAnimation from '@/components/OpeningAnimation';
 
 // SRM Logo Component
 const SRMLogo = ({
@@ -53,7 +55,7 @@ const SRMLogo = ({
     </div>
     {!hideText && (
       <div className="flex flex-col leading-tight pt-0.5">
-        <span className={`font-bold text-blue-800 tracking-tight ${titleClassName}`}>SRM</span>
+        <span className={`font-bold text-blue-600 dark:text-blue-400 tracking-tight ${titleClassName}`}>SRM</span>
         <span className={`font-bold text-foreground -mt-1 ${subtitleClassName}`}>Virtual Labs</span>
       </div>
     )}
@@ -128,8 +130,56 @@ const SYLLABUS_UNITS = [
   }
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut" as const,
+    },
+  },
+};
+
+const Section = ({ children, className = "", id = "" }: { children: React.ReactNode; className?: string; id?: string }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <motion.section
+      id={id}
+      ref={ref}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={containerVariants}
+      className={className}
+    >
+      {children}
+    </motion.section>
+  );
+};
+
 export default function Landing() {
   const [openUnits, setOpenUnits] = useState<number[]>([1]);
+  const [showOpening, setShowOpening] = useState(() => {
+    return !sessionStorage.getItem("hasVisited");
+  });
+  const { scrollYProgress } = useScroll();
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.9]);
 
   const toggleUnit = (unit: number) => {
     setOpenUnits(prev =>
@@ -138,12 +188,6 @@ export default function Landing() {
         : [...prev, unit]
     );
   };
-
-  const implementedCount = MODULES.reduce(
-    (acc, m) => acc + m.subModules.filter(sm => sm.implemented).length,
-    0
-  );
-  const totalCount = MODULES.reduce((acc, m) => acc + m.subModules.length, 0);
 
   const learningOutcomes = [
     { icon: Brain, text: "Apply AI problem-solving techniques to real-world scenarios" },
@@ -178,382 +222,307 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-50">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-16 sm:h-20">
-            <div className="flex items-center gap-3 sm:gap-6">
-              <SRMLogo />
-              <div className="hidden md:flex items-center gap-4 border-l border-border pl-6">
-                <img src="/srm-official-logo.jpg" alt="SRM Institute of Science and Technology" className="h-10 sm:h-12 object-contain" />
-                <div className="flex flex-col">
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">21AIC502J</p>
-                  <p className="text-sm font-semibold text-foreground">Emerging AI Applications</p>
-                </div>
-              </div>
-            </div>
-            <nav className="flex items-center gap-2 sm:gap-4">
+    <div className="min-h-screen bg-background font-sans selection:bg-primary/20">
+      {showOpening && <OpeningAnimation onComplete={() => {
+        setShowOpening(false);
+        sessionStorage.setItem("hasVisited", "true");
+      }} />}
 
-              <Link to="/module/lab-1/dfs">
-                <Button size="sm" className="gap-1 sm:gap-2">
-                  <Beaker className="h-4 w-4" />
-                  <span className="hidden sm:inline">Enter Labs</span>
-                  <span className="sm:hidden">Labs</span>
-                </Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="gradient-hero text-white">
-        <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24">
-          <div className="max-w-4xl mx-auto text-center space-y-6">
-            <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 px-4 py-1.5 text-sm font-medium">
-              21AIC502J • Virtual Laboratory
-            </Badge>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
-              Emerging Artificial Intelligence
-              <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-white/80">Applications</span>
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-              An interactive laboratory course exploring real-world applications of
-              Artificial Intelligence through hands-on visualization and experimentation
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <Link to="/module/lab-1/dfs">
-                <Button size="lg" className="gap-2 w-full sm:w-auto text-base px-8 bg-white text-primary hover:bg-white/90">
-                  Explore Labs
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              </Link>
-              <a href="#syllabus">
-                <Button variant="outline" size="lg" className="gap-2 w-full sm:w-auto text-base px-8 border-white/50 bg-white/10 text-white hover:bg-white/20">
-                  <BookText className="h-5 w-5" />
-                  View Syllabus
-                </Button>
-              </a>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-6 pt-6 text-sm text-white/80">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-secondary" />
-                <span>12 Lab Modules</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-secondary" />
-                <span>5 Course Units</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-secondary" />
-                <span>Interactive Demos</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About the Course */}
-      <section id="about" className="py-12 sm:py-16 bg-card/50">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center space-y-4 mb-10">
-              <Badge variant="outline" className="px-3 py-1">
-                <BookOpen className="h-3 w-3 mr-1" />
-                About the Course
-              </Badge>
-              <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-                Course Overview
-              </h2>
-            </div>
-            <Card className="bg-card border-border">
-              <CardContent className="p-6 sm:p-8">
-                <p className="text-muted-foreground leading-relaxed text-base sm:text-lg">
-                  This laboratory course provides hands-on experience with cutting-edge Artificial Intelligence
-                  applications. Students will explore and implement various AI algorithms including search strategies
-                  (DFS, BFS, A*), optimization techniques (Hill Climbing), fuzzy logic systems, machine learning
-                  models, natural language processing, and ontology-based systems. Through interactive visualizations
-                  and practical exercises, students develop proficiency in applying AI solutions to real-world problems
-                  such as house price prediction, heart disease diagnosis, plagiarism detection, and expert matching systems.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Unit-Wise Syllabus */}
-      <section id="syllabus" className="py-12 sm:py-16">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center space-y-4 mb-10">
-              <Badge variant="outline" className="px-3 py-1">
-                <BookText className="h-3 w-3 mr-1" />
-                Course Content
-              </Badge>
-              <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-                Unit-Wise Syllabus Overview
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Click on each unit to explore the topics covered
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {SYLLABUS_UNITS.map((unit) => (
-                <Collapsible
-                  key={unit.unit}
-                  open={openUnits.includes(unit.unit)}
-                  onOpenChange={() => toggleUnit(unit.unit)}
-                >
-                  <Card className={`transition-all duration-200 ${openUnits.includes(unit.unit) ? 'border-primary/50 shadow-md' : 'hover:border-primary/30'}`}>
-                    <CollapsibleTrigger className="w-full">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary font-bold">
-                              {unit.unit}
-                            </div>
-                            <div className="text-left">
-                              <p className="text-xs text-muted-foreground font-medium">Unit {unit.unit}</p>
-                              <CardTitle className="text-lg">{unit.title}</CardTitle>
-                            </div>
-                          </div>
-                          <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${openUnits.includes(unit.unit) ? 'rotate-180' : ''}`} />
-                        </div>
-                      </CardHeader>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <CardContent className="pt-0 pb-4">
-                        <ul className="space-y-2 ml-14">
-                          {unit.topics.map((topic, index) => (
-                            <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                              <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                              <span>{topic}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </CollapsibleContent>
-                  </Card>
-                </Collapsible>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Laboratory Modules */}
-      <section id="labs" className="py-12 sm:py-16 bg-card/50">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center space-y-4 mb-10">
-            <Badge variant="outline" className="px-3 py-1">
-              <Beaker className="h-3 w-3 mr-1" />
-              Laboratory Modules
-            </Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-              Explore All 12 Labs
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Each lab includes theory, algorithms, code implementations, interactive demos, and practice exercises
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {MODULES.map((module) => {
-              const firstSubModule = module.subModules[0];
-              const isAvailable = firstSubModule?.implemented;
-
-              return (
-                <Card
-                  key={module.id}
-                  className={`group transition-all duration-300 hover:shadow-lg hover:border-primary/30 ${isAvailable ? 'cursor-pointer' : 'opacity-70'
-                    }`}
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className={`p-2.5 rounded-lg ${isAvailable ? 'bg-primary/10' : 'bg-muted'}`}>
-                        <DynamicIcon
-                          name={module.icon}
-                          className={`h-5 w-5 ${isAvailable ? 'text-primary' : 'text-muted-foreground'}`}
-                        />
-                      </div>
-                      <Badge variant={isAvailable ? 'default' : 'secondary'} className="text-xs">
-                        Lab {module.number}
-                      </Badge>
+      {!showOpening && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Header */}
+          <header className="fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-md border-b border-border/50">
+            <div className="container mx-auto px-4 sm:px-6">
+              <div className="flex items-center justify-between h-16 sm:h-20">
+                <div className="flex items-center gap-3 sm:gap-6">
+                  <Link to="/">
+                    <SRMLogo />
+                  </Link>
+                  <div className="hidden md:flex items-center gap-4 border-l border-border pl-6">
+                    <div className="flex flex-col">
+                      <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">21AIC502J</p>
+                      <p className="text-sm font-semibold text-foreground">Emerging AI Applications</p>
                     </div>
-                    <CardTitle className="text-base leading-tight">
-                      {module.title}
-                    </CardTitle>
-                    <CardDescription className="text-sm line-clamp-2 mt-1">
-                      {module.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    {isAvailable && firstSubModule ? (
-                      <Link to={`/module/${module.id}/${firstSubModule.id}`}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-                        >
-                          View Lab
-                          <ArrowRight className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                    ) : (
-                      <Button variant="outline" size="sm" className="w-full" disabled>
-                        Coming Soon
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Learning Outcomes */}
-      <section className="py-12 sm:py-16">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center space-y-4 mb-10">
-            <Badge variant="outline" className="px-3 py-1">
-              <Target className="h-3 w-3 mr-1" />
-              Learning Outcomes
-            </Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-              Skills You'll Gain
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Upon completion of this course, students will be able to:
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-4">
-            {learningOutcomes.map((outcome, index) => (
-              <div
-                key={index}
-                className="flex items-start gap-4 p-4 rounded-lg bg-card border border-border hover:border-primary/30 transition-colors"
-              >
-                <div className="p-2 rounded-lg bg-primary/10 shrink-0">
-                  <outcome.icon className="h-5 w-5 text-primary" />
-                </div>
-                <p className="text-foreground text-sm sm:text-base leading-relaxed">
-                  {outcome.text}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Learning Features */}
-      <section className="py-12 sm:py-16 bg-card/50">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center space-y-4 mb-10">
-            <Badge variant="outline" className="px-3 py-1">
-              <Sparkles className="h-3 w-3 mr-1" />
-              Interactive Learning
-            </Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-              How You'll Learn
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Engage with AI concepts through multiple interactive modalities
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {interactiveFeatures.map((feature, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow border-border">
-                <CardHeader>
-                  <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                    <feature.icon className="h-7 w-7 text-primary" />
                   </div>
-                  <CardTitle className="text-lg">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-12 sm:py-16 bg-primary/5 border-y border-border">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="max-w-3xl mx-auto text-center space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-              Ready to Begin Your AI Journey?
-            </h2>
-            <p className="text-muted-foreground text-lg mb-4">
-              Start exploring the 12 comprehensive laboratory modules and develop practical AI skills
-            </p>
-            <Link to="/module/lab-1/dfs" className="inline-block mt-4">
-              <Button size="lg" className="gradient-primary text-white shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 gap-2 text-base px-10 h-14">
-                Start Labs
-                <ArrowRight className="h-5 w-5" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-card border-t border-border py-8 sm:py-12">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="flex flex-col items-center text-center space-y-6">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-0 w-full max-w-5xl mx-auto py-4">
-              <div className="flex-1 flex justify-center px-4">
-                <SRMLogo
-                  imgClassName="w-20 h-20 sm:w-36 sm:h-36"
-                  titleClassName="sm:text-4xl"
-                  subtitleClassName="sm:text-xl"
-                  gapClassName="gap-6"
-                />
-              </div>
-
-              <div className="hidden sm:block w-[1.5px] h-24 bg-border shrink-0" />
-
-              <div className="flex-1 flex justify-center px-4">
-                <img src="/srm-official-logo.jpg" alt="SRM Institute of Science and Technology" className="h-16 sm:h-24 object-contain" />
-              </div>
-
-              <div className="hidden sm:block w-[1.5px] h-24 bg-border shrink-0" />
-
-              <div className="flex-1 flex flex-col items-center sm:items-start text-center sm:text-left px-8">
-                <p className="text-base sm:text-lg font-bold text-foreground leading-tight">Department of Computational Intelligence</p>
-                <div className="mt-2 space-y-1">
-                  <p className="text-sm font-medium text-primary">21AIC502J</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">Emerging Artificial Intelligence Applications</p>
                 </div>
+                <nav className="flex items-center gap-2 sm:gap-4">
+                  <Link to="/module/lab-1/dfs">
+                    <Button size="sm" className="gap-2 shadow-sm">
+                      <Beaker className="h-4 w-4" />
+                      <span className="hidden sm:inline">Enter Labs</span>
+                      <span className="sm:hidden">Labs</span>
+                    </Button>
+                  </Link>
+                </nav>
               </div>
             </div>
+          </header>
 
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">21AIC502J</span> — Emerging Artificial Intelligence Applications
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Virtual Laboratory for Academic Use
-              </p>
-            </div>
+          {/* Hero Section */}
+          <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-32 overflow-hidden">
+            <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-background to-background dark:from-blue-950/30 dark:via-background dark:to-background" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -z-10 animate-pulse" />
 
-            <div className="pt-4 border-t border-border w-full max-w-md">
-              <p className="text-xs text-muted-foreground">
-                © {new Date().getFullYear()} SRM Institute of Science and Technology.
-                This virtual laboratory is intended for educational purposes only.
-              </p>
+            <motion.div
+              className="container mx-auto px-4 sm:px-6 text-center space-y-8"
+              style={{ opacity, scale }}
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <Badge variant="secondary" className="px-4 py-2 text-sm font-medium border-primary/20 bg-primary/5 text-primary mb-6">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Next-Gen Virtual Laboratory
+                </Badge>
+              </motion.div>
+
+              <motion.h1
+                className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-foreground max-w-5xl mx-auto leading-[1.1]"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                Master <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">Artificial Intelligence</span> Through <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">Experimentation</span>
+              </motion.h1>
+
+              <motion.p
+                className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                Dive into interactive visualizations, real-world applications, and hands-on experiments designed to bridge the gap between theory and practice.
+              </motion.p>
+
+              <motion.div
+                className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                <Link to="/module/lab-1/dfs">
+                  <Button size="lg" className="h-14 px-8 text-lg gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all rounded-full">
+                    Start Exploring <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </Link>
+                <a href="#syllabus">
+                  <Button variant="outline" size="lg" className="h-14 px-8 text-lg gap-2 rounded-full border-2">
+                    <BookText className="h-5 w-5" /> View Syllabus
+                  </Button>
+                </a>
+              </motion.div>
+
+              <motion.div
+                className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto pt-12 opacity-80"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.8 }}
+                transition={{ duration: 1, delay: 0.8 }}
+              >
+                {[
+                  { label: "Lab Modules", icon: "12" },
+                  { label: "Course Units", icon: "05" },
+                  { label: "Interactive Demos", icon: <Cpu className="w-6 h-6" /> },
+                  { label: "Real-world Apps", icon: <Monitor className="w-6 h-6" /> },
+                ].map((stat, i) => (
+                  <div key={i} className="flex flex-col items-center gap-2">
+                    <div className="text-2xl font-bold text-primary flex items-center justify-center h-10">{stat.icon}</div>
+                    <div className="text-sm font-medium text-muted-foreground">{stat.label}</div>
+                  </div>
+                ))}
+              </motion.div>
+            </motion.div>
+          </section>
+
+          {/* Labs Section with Staggered Grid */}
+          <Section className="py-20 sm:py-32 bg-primary/10 relative">
+            <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
+            <div className="container mx-auto px-4 sm:px-6 relative">
+              <div className="text-center space-y-4 mb-16">
+                <motion.div variants={itemVariants}>
+                  <Badge variant="outline" className="px-4 py-1.5 border-primary/20">
+                    <Beaker className="h-3.5 w-3.5 mr-2 text-primary" />
+                    Laboratory Modules
+                  </Badge>
+                </motion.div>
+                <motion.h2 variants={itemVariants} className="text-3xl sm:text-4xl md:text-5xl font-bold">
+                  Hands-On Learning
+                </motion.h2>
+                <motion.p variants={itemVariants} className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                  Explore our comprehensive suite of 12 laboratory modules, each designed to master specific AI concepts through practice.
+                </motion.p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {MODULES.map((module) => {
+                  const firstSubModule = module.subModules[0];
+                  const isAvailable = firstSubModule?.implemented;
+
+                  return (
+                    <motion.div key={module.id} variants={itemVariants}>
+                      <Link to={isAvailable ? `/module/${module.id}/${firstSubModule.id}` : '#'}>
+                        <Card className={`h-full group hover:shadow-xl transition-all duration-300 border-border/50 bg-card/50 backdrop-blur-sm ${!isAvailable && 'opacity-60 grayscale'}`}>
+                          <CardHeader>
+                            <div className="flex justify-between items-start mb-4">
+                              <div className={`p-3 rounded-xl ${isAvailable ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'} group-hover:scale-110 transition-transform duration-300`}>
+                                <DynamicIcon name={module.icon} className="h-6 w-6" />
+                              </div>
+                              <Badge className={`text-xs font-normal ${isAvailable ? "bg-primary hover:bg-primary/90 text-primary-foreground" : "bg-primary/10 text-primary hover:bg-primary/20 border-primary/20"}`}>
+                                Lab {module.number}
+                              </Badge>
+                            </div>
+                            <CardTitle className="text-lg leading-snug group-hover:text-primary transition-colors">
+                              {module.title}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                              {module.description}
+                            </p>
+                            <div className={`flex items-center text-sm font-medium ${isAvailable ? 'text-primary' : 'text-muted-foreground'} group-hover:translate-x-1 transition-transform`}>
+                              {isAvailable ? 'Start Lab' : 'Coming Soon'} <ArrowRight className="ml-2 h-4 w-4" />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </div>
-      </footer>
+          </Section>
+
+          {/* Features Section */}
+          <Section className="py-20 sm:py-32">
+            <div className="container mx-auto px-4 sm:px-6">
+              <div className="text-center space-y-4 mb-16">
+                <motion.div variants={itemVariants}>
+                  <Badge variant="outline" className="px-4 py-1.5">
+                    <Monitor className="h-3.5 w-3.5 mr-2" />
+                    Interactive Features
+                  </Badge>
+                </motion.div>
+                <motion.h2 variants={itemVariants} className="text-3xl sm:text-4xl font-bold">
+                  Learn by Doing
+                </motion.h2>
+                <motion.p variants={itemVariants} className="text-muted-foreground max-w-2xl mx-auto text-lg">
+                  Our platform provides multiple ways to engage with the content.
+                </motion.p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {interactiveFeatures.map((feature, index) => (
+                  <motion.div key={index} variants={itemVariants}>
+                    <Card className="h-full border-none shadow-none bg-transparent text-center">
+                      <CardHeader className="flex flex-col items-center">
+                        <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-4 group hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+                          <feature.icon className="w-8 h-8 text-white transition-colors" />
+                        </div>
+                        <CardTitle className="text-xl">{feature.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground">
+                          {feature.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </Section>
+
+          {/* Syllabus Section (Updated UI) */}
+          <Section id="syllabus" className="py-20 sm:py-32 bg-primary/10">
+            <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+              <div className="text-center space-y-4 mb-12">
+                <motion.div variants={itemVariants}>
+                  <Badge variant="outline" className="px-4 py-1.5">
+                    <BookText className="h-3.5 w-3.5 mr-2" />
+                    Syllabus
+                  </Badge>
+                </motion.div>
+                <motion.h2 variants={itemVariants} className="text-3xl sm:text-4xl font-bold">
+                  Course Curriculum
+                </motion.h2>
+              </div>
+
+              <div className="space-y-4">
+                {SYLLABUS_UNITS.map((unit) => (
+                  <motion.div key={unit.unit} variants={itemVariants}>
+                    <Collapsible
+                      open={openUnits.includes(unit.unit)}
+                      onOpenChange={() => toggleUnit(unit.unit)}
+                    >
+                      <Card className={`overflow-hidden transition-all duration-300 ${openUnits.includes(unit.unit) ? 'border-primary shadow-md' : 'hover:border-primary/50'}`}>
+                        <CollapsibleTrigger className="w-full text-left">
+                          <div className="p-6 flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm">
+                                {unit.unit}
+                              </span>
+                              <h3 className="text-lg font-semibold">{unit.title}</h3>
+                            </div>
+                            <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${openUnits.includes(unit.unit) ? 'rotate-180' : ''}`} />
+                          </div>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div className="px-6 pb-6 pt-0 ml-12">
+                            <ul className="space-y-3">
+                              {unit.topics.map((topic, index) => (
+                                <li key={index} className="flex items-start gap-3 text-sm text-muted-foreground">
+                                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                  <span>{topic}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </CollapsibleContent>
+                      </Card>
+                    </Collapsible>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </Section>
+
+          {/* Learning Outcomes & Footer can follow similar pattern or stay simpler */}
+          <section className="py-20 sm:py-32">
+            <div className="container mx-auto px-4 sm:px-6">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold mb-4">What You Will Achieve</h2>
+                <p className="text-muted-foreground">Key takeaways from this laboratory course</p>
+              </div>
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                {learningOutcomes.map((outcome, i) => (
+                  <Card key={i} className="bg-card hover:bg-accent/50 transition-colors border-border/50">
+                    <CardContent className="p-6 flex flex-col gap-4">
+                      <outcome.icon className="w-8 h-8 text-primary mb-2" />
+                      <p className="font-medium text-foreground">{outcome.text}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer className="py-12 border-t border-border bg-background">
+            <div className="container mx-auto px-4 text-center text-muted-foreground text-sm">
+              <div className="flex flex-col items-center gap-4 mb-8">
+                <SRMLogo className="scale-125 mb-2" />
+                <p className="font-bold text-lg text-foreground">Department of Computational Intelligence</p>
+              </div>
+              <p>© {new Date().getFullYear()} SRM Institute of Science and Technology. All rights reserved.</p>
+            </div>
+          </footer>
+        </motion.div>
+      )}
     </div>
   );
 }
