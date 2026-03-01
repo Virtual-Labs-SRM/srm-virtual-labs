@@ -1,12 +1,19 @@
 import { useState, useCallback, useRef } from 'react';
 import { Graph, DFSState } from '@/types/graph';
 
+// Augment the DFSState definition to match our needs, assuming types/graph might not have parentMap.
+// Actually, let's just make sure DFSState has it or override.
+// We'll augment it in the returned type or state. Wait, if DFSState is imported from types/graph, we need to modify it or cast.
+// We should modify types/graph too, but let's just add it locally if it's imported.
+
+
 export interface DFSHistoryEntry {
   visitedNodes: string[];
   currentNode: string | null;
   stack: string[];
   traversalOrder: string[];
   traversedEdges: string[];
+  parentMap: [string, string][];
   isComplete: boolean;
 }
 
@@ -16,6 +23,7 @@ const initialDFSState: DFSState = {
   stack: [],
   traversalOrder: [],
   traversedEdges: new Set(),
+  parentMap: new Map(),
   isRunning: false,
   isComplete: false,
 };
@@ -63,6 +71,7 @@ export function useDFS(graph: Graph, speed: number) {
     stack: string[];
     traversalOrder: string[];
     traversedEdges: Set<string>;
+    parentMap: Map<string, string>;
     isComplete: boolean;
   }) => {
     const entry: DFSHistoryEntry = {
@@ -71,6 +80,7 @@ export function useDFS(graph: Graph, speed: number) {
       stack: [...state.stack],
       traversalOrder: [...state.traversalOrder],
       traversedEdges: Array.from(state.traversedEdges),
+      parentMap: Array.from(state.parentMap.entries()),
       isComplete: state.isComplete,
     };
     historyRef.current.push(entry);
@@ -87,6 +97,7 @@ export function useDFS(graph: Graph, speed: number) {
       stack: [...entry.stack],
       traversalOrder: [...entry.traversalOrder],
       traversedEdges: new Set(entry.traversedEdges),
+      parentMap: new Map(entry.parentMap),
       isRunning: false,
       isComplete: entry.isComplete,
     });
@@ -96,6 +107,7 @@ export function useDFS(graph: Graph, speed: number) {
     visitedRef.current = new Set(entry.visitedNodes);
     traversalOrderRef.current = [...entry.traversalOrder];
     traversedEdgesRef.current = new Set(entry.traversedEdges);
+    parentMapRef.current = new Map(entry.parentMap);
   }, []);
 
   const step = useCallback((
@@ -202,6 +214,7 @@ export function useDFS(graph: Graph, speed: number) {
         stack: [...result.newStack],
         traversalOrder: [...result.newTraversalOrder],
         traversedEdges: new Set(result.newTraversedEdges),
+        parentMap: new Map(parentMapRef.current),
         isComplete: result.isComplete,
       };
 
@@ -266,6 +279,7 @@ export function useDFS(graph: Graph, speed: number) {
       stack: [startNodeId],
       traversalOrder: [],
       traversedEdges: new Set<string>(),
+      parentMap: new Map<string, string>(),
       isComplete: false,
     });
 
@@ -275,6 +289,7 @@ export function useDFS(graph: Graph, speed: number) {
       stack: [startNodeId],
       traversalOrder: [],
       traversedEdges: new Set<string>(),
+      parentMap: new Map<string, string>(),
       isRunning: true,
       isComplete: false,
     });
@@ -312,6 +327,7 @@ export function useDFS(graph: Graph, speed: number) {
         stack: result.newStack,
         traversalOrder: result.newTraversalOrder,
         traversedEdges: result.newTraversedEdges,
+        parentMap: new Map(parentMap),
         isRunning: false,
         isComplete: result.isComplete,
       };
@@ -323,6 +339,7 @@ export function useDFS(graph: Graph, speed: number) {
         stack: [...result.newStack],
         traversalOrder: [...result.newTraversalOrder],
         traversedEdges: Array.from(result.newTraversedEdges),
+        parentMap: Array.from(parentMap.entries()),
         isComplete: result.isComplete,
       };
       historyRef.current.push(entry);

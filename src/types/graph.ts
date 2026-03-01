@@ -25,6 +25,7 @@ export interface DFSState {
   stack: string[];
   traversalOrder: string[];
   traversedEdges: Set<string>;
+  parentMap: Map<string, string>;
   isRunning: boolean;
   isComplete: boolean;
 }

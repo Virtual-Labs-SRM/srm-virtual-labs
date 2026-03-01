@@ -569,10 +569,7 @@ export function CollegeSelectionLab() {
 
   const handleSectionChange = (section: string) => {
     setActiveSection(section);
-    const element = document.getElementById(section);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

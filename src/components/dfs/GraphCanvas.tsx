@@ -154,6 +154,12 @@ export function GraphCanvas({
     if (dfsState.traversedEdges.has(key1) || dfsState.traversedEdges.has(key2)) {
       return 'traversed';
     }
+    for (const sNode of dfsState.stack) {
+      const parent = dfsState.parentMap.get(sNode);
+      if (parent && ((from === parent && to === sNode) || (from === sNode && to === parent))) {
+        return 'stacked';
+      }
+    }
     return 'unvisited';
   };
 
@@ -246,7 +252,9 @@ export function GraphCanvas({
                 y2={end.y}
                 className={`transition-all duration-500 ${edgeState === 'traversed'
                   ? 'stroke-primary stroke-[3px]'
-                  : 'stroke-muted-foreground/30 stroke-2'
+                  : edgeState === 'stacked'
+                    ? 'stroke-primary/50 stroke-[2px] stroke-dashed animate-pulse'
+                    : 'stroke-muted-foreground/30 stroke-2'
                   }`}
               />
             </g>

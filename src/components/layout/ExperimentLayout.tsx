@@ -1,4 +1,5 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
+import React from 'react';
 import { SidebarProvider, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import { ExperimentHeader } from '@/components/lab/ExperimentHeader';
@@ -64,11 +65,17 @@ export function ExperimentLayout({
             sections={sections}
           />
 
-          {/* Main Content */}
+          {/* Main Content — only the active section is rendered */}
           <main className="container mx-auto px-4 sm:px-6 py-8">
-            <div className="space-y-8">
-              {children}
-            </div>
+            {React.Children.map(children, (child) => {
+              if (!React.isValidElement(child)) return null;
+              if ((child.props as { id?: string }).id !== activeSection) return null;
+              return (
+                <div key={activeSection} className="animate-in fade-in duration-300">
+                  {child}
+                </div>
+              );
+            })}
           </main>
         </SidebarInset>
       </div>

@@ -548,8 +548,8 @@ displayMessage(data.response)` }
               onClick={handlePlayPause}
               title={isPlaying ? 'Pause' : 'Start Simulation'}
               className={`h-10 px-6 rounded-full font-bold shadow-lg transition-all duration-300 ${isPlaying
-                  ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/20'
-                  : 'gradient-primary text-white hover:opacity-90 shadow-primary/25'
+                ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/20'
+                : 'gradient-primary text-white hover:opacity-90 shadow-primary/25'
                 }`}
             >
               {isPlaying ? (
@@ -605,7 +605,7 @@ displayMessage(data.response)` }
             </div>
 
             <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 font-bold text-xl border transition-all duration-500 shadow-inner ${demoStep === 0 ? 'bg-muted text-muted-foreground border-transparent' :
-                'bg-primary text-primary-foreground border-primary shadow-primary/20'
+              'bg-primary text-primary-foreground border-primary shadow-primary/20'
               }`}>
               {demoStep}
             </div>
@@ -893,10 +893,7 @@ export function ChatApplicationLab() {
 
   const handleSectionChange = (section: string) => {
     setActiveSection(section);
-    const element = document.getElementById(section);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

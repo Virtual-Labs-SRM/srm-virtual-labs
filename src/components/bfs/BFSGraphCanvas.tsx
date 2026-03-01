@@ -154,6 +154,12 @@ export function BFSGraphCanvas({
     if (bfsState.traversedEdges.has(key1) || bfsState.traversedEdges.has(key2)) {
       return 'traversed';
     }
+    for (const qNode of bfsState.queue) {
+      const parent = bfsState.parentMap.get(qNode);
+      if (parent && ((from === parent && to === qNode) || (from === qNode && to === parent))) {
+        return 'queued';
+      }
+    }
     return 'unvisited';
   };
 
@@ -233,7 +239,9 @@ export function BFSGraphCanvas({
                 y2={end.y}
                 className={`transition-all duration-500 ${edgeState === 'traversed'
                   ? 'stroke-primary stroke-[3px]'
-                  : 'stroke-muted-foreground/30 stroke-2'
+                  : edgeState === 'queued'
+                    ? 'stroke-primary/50 stroke-[2px] stroke-dashed animate-pulse'
+                    : 'stroke-muted-foreground/30 stroke-2'
                   }`}
               />
             </g>

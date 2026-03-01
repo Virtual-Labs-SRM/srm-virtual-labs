@@ -71,10 +71,7 @@ export function FuzzyShapeMatchingLab() {
 
   const handleSectionChange = (section: string) => {
     setCurrentSection(section);
-    const element = document.getElementById(section);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

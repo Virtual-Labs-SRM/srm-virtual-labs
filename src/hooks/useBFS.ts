@@ -7,6 +7,7 @@ export interface BFSState {
   queue: string[];
   traversalOrder: string[];
   traversedEdges: Set<string>;
+  parentMap: Map<string, string>;
   isRunning: boolean;
   isComplete: boolean;
   currentLevel: number;
@@ -19,6 +20,7 @@ export interface BFSHistoryEntry {
   queue: string[];
   traversalOrder: string[];
   traversedEdges: string[];
+  parentMap: [string, string][];
   isComplete: boolean;
   currentLevel: number;
   levelNodes: [number, string[]][];
@@ -30,6 +32,7 @@ const initialBFSState: BFSState = {
   queue: [],
   traversalOrder: [],
   traversedEdges: new Set(),
+  parentMap: new Map(),
   isRunning: false,
   isComplete: false,
   currentLevel: 0,
@@ -81,6 +84,7 @@ export function useBFS(graph: Graph, speed: number) {
     queue: string[];
     traversalOrder: string[];
     traversedEdges: Set<string>;
+    parentMap: Map<string, string>;
     isComplete: boolean;
     currentLevel: number;
     levelNodes: Map<number, string[]>;
@@ -91,6 +95,7 @@ export function useBFS(graph: Graph, speed: number) {
       queue: [...state.queue],
       traversalOrder: [...state.traversalOrder],
       traversedEdges: Array.from(state.traversedEdges),
+      parentMap: Array.from(state.parentMap.entries()),
       isComplete: state.isComplete,
       currentLevel: state.currentLevel,
       levelNodes: Array.from(state.levelNodes.entries()),
@@ -109,6 +114,7 @@ export function useBFS(graph: Graph, speed: number) {
       queue: [...entry.queue],
       traversalOrder: [...entry.traversalOrder],
       traversedEdges: new Set(entry.traversedEdges),
+      parentMap: new Map(entry.parentMap),
       isRunning: false,
       isComplete: entry.isComplete,
       currentLevel: entry.currentLevel,
@@ -120,6 +126,7 @@ export function useBFS(graph: Graph, speed: number) {
     visitedRef.current = new Set(entry.visitedNodes);
     traversalOrderRef.current = [...entry.traversalOrder];
     traversedEdgesRef.current = new Set(entry.traversedEdges);
+    parentMapRef.current = new Map(entry.parentMap);
     levelNodesRef.current = new Map(entry.levelNodes);
   }, []);
 
@@ -154,6 +161,7 @@ export function useBFS(graph: Graph, speed: number) {
           queue: [] as string[],
           traversalOrder: [...traversalOrder],
           traversedEdges: new Set(traversedEdges),
+          parentMap: new Map(parentMap),
           isComplete: true,
           currentLevel: 0,
           levelNodes: new Map(levelNodes),
@@ -204,6 +212,7 @@ export function useBFS(graph: Graph, speed: number) {
         queue: [...queue],
         traversalOrder: [...traversalOrder],
         traversedEdges: new Set(traversedEdges),
+        parentMap: new Map(parentMap),
         isComplete: queue.length === 0,
         currentLevel: currentLvl,
         levelNodes: new Map(levelNodes),
@@ -276,6 +285,7 @@ export function useBFS(graph: Graph, speed: number) {
       queue: [startNodeId],
       traversalOrder: [],
       traversedEdges: new Set<string>(),
+      parentMap: new Map<string, string>(),
       isComplete: false,
       currentLevel: 0,
       levelNodes: new Map(levelNodes),
@@ -287,6 +297,7 @@ export function useBFS(graph: Graph, speed: number) {
       queue: [startNodeId],
       traversalOrder: [],
       traversedEdges: new Set<string>(),
+      parentMap: new Map<string, string>(),
       isRunning: true,
       isComplete: false,
       currentLevel: 0,
@@ -312,6 +323,7 @@ export function useBFS(graph: Graph, speed: number) {
       const traversalOrder = [...prev.traversalOrder];
       const traversedEdges = new Set(prev.traversedEdges);
       const levelNodes = new Map(prev.levelNodes);
+      const newStateParentMap = new Map(prev.parentMap);
 
       if (queue.length === 0 && startNodeId) {
         visited.add(startNodeId);
@@ -330,17 +342,19 @@ export function useBFS(graph: Graph, speed: number) {
         if (!visited.has(neighbor)) {
           visited.add(neighbor);
           queue.push(neighbor);
+          newStateParentMap.set(neighbor, current);
           traversedEdges.add(getEdgeKey(current, neighbor));
           traversedEdges.add(getEdgeKey(neighbor, current));
         }
       }
 
-      const newState = {
+      const newState: BFSState = {
         visitedNodes: visited,
         currentNode: current,
         queue,
         traversalOrder,
         traversedEdges,
+        parentMap: newStateParentMap,
         isRunning: false,
         isComplete: queue.length === 0,
         currentLevel: prev.currentLevel,
@@ -354,6 +368,7 @@ export function useBFS(graph: Graph, speed: number) {
         queue: [...queue],
         traversalOrder: [...traversalOrder],
         traversedEdges: Array.from(traversedEdges),
+        parentMap: Array.from(newStateParentMap.entries()),
         isComplete: queue.length === 0,
         currentLevel: prev.currentLevel,
         levelNodes: Array.from(levelNodes.entries()),
@@ -366,6 +381,7 @@ export function useBFS(graph: Graph, speed: number) {
       visitedRef.current = new Set(visited);
       traversalOrderRef.current = [...traversalOrder];
       traversedEdgesRef.current = new Set(traversedEdges);
+      parentMapRef.current = new Map(newStateParentMap);
       levelNodesRef.current = new Map(levelNodes);
 
       return newState;
