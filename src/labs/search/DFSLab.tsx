@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useGraph } from '@/hooks/useGraph';
 import { useDFS } from '@/hooks/useDFS';
 import { GraphCanvas, EditMode } from '@/components/dfs/GraphCanvas';
-import { TraversalInfo } from '@/components/dfs/TraversalInfo';
+import { DFSSimpleExplanation, TraversalInfo } from '@/components/dfs/TraversalInfo';
 import { Legend } from '@/components/dfs/Legend';
 import { GraphControls } from '@/components/dfs/GraphControls';
 import { Play, Settings, AlertCircle, Pause, StepForward, StepBack, RotateCcw, Table } from 'lucide-react';
@@ -541,6 +541,7 @@ export function DFSLab() {
 
             {/* Legend */}
             <Legend />
+            <DFSSimpleExplanation dfsState={dfsState} />
           </div>
 
           {/* Right Column: Info & Tabs */}
@@ -558,7 +559,7 @@ export function DFSLab() {
               </TabsList>
 
               <TabsContent value="history" className="mt-4 animate-in fade-in slide-in-from-right-1">
-                <TraversalInfo dfsState={dfsState} />
+                <TraversalInfo dfsState={dfsState} showSimpleExplanation={false} />
               </TabsContent>
 
               <TabsContent value="graph" className="mt-4 animate-in fade-in slide-in-from-right-1">

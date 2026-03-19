@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useGraph } from '@/hooks/useGraph';
 import { useBFS } from '@/hooks/useBFS';
 import { BFSGraphCanvas } from '@/components/bfs/BFSGraphCanvas';
-import { BFSTraversalInfo } from '@/components/bfs/BFSTraversalInfo';
+import { BFSSimpleExplanation, BFSTraversalInfo } from '@/components/bfs/BFSTraversalInfo';
 import { Legend } from '@/components/dfs/Legend';
 import { GraphControls } from '@/components/dfs/GraphControls';
 import { Play, Settings, Pause, StepForward, StepBack, RotateCcw, Table } from 'lucide-react';
@@ -467,6 +467,7 @@ export function BFSLab() {
 
             {/* Legend */}
             <Legend />
+            <BFSSimpleExplanation bfsState={bfsState} />
           </div>
 
           {/* Right Column: Info & Tabs */}
@@ -484,7 +485,7 @@ export function BFSLab() {
               </TabsList>
 
               <TabsContent value="history" className="mt-4 animate-in fade-in slide-in-from-right-1">
-                <BFSTraversalInfo bfsState={bfsState} />
+                <BFSTraversalInfo bfsState={bfsState} showSimpleExplanation={false} />
               </TabsContent>
 
               <TabsContent value="graph" className="mt-4 animate-in fade-in slide-in-from-right-1">

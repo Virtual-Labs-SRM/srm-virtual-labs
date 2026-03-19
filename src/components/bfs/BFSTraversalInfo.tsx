@@ -4,11 +4,114 @@ import { ArrowRight, ListStart } from 'lucide-react';
 
 interface BFSTraversalInfoProps {
   bfsState: BFSState;
+  showSimpleExplanation?: boolean;
 }
 
-export function BFSTraversalInfo({ bfsState }: BFSTraversalInfoProps) {
+export function BFSSimpleExplanation({ bfsState }: { bfsState: BFSState }) {
+  const nextNode = bfsState.queue.length > 0 ? bfsState.queue[0] : null;
+  const nextParent = nextNode ? bfsState.parentMap.get(nextNode) : undefined;
+
+  return (
+    <Card className="bg-card/50">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm font-medium">Simple Explanation</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2 text-sm">
+        {bfsState.isComplete ? (
+          <p className="text-sm text-muted-foreground">
+            All reachable nodes were visited level by level using the queue.
+          </p>
+        ) : nextNode ? (
+          <>
+            <p className="text-sm text-muted-foreground">
+              BFS explores in waves: it always takes the front of the queue next.
+            </p>
+            <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+              <li>
+                <span className="font-medium text-foreground">Dequeue</span>{' '}
+                <span className="font-mono">{nextNode}</span>.
+              </li>
+              <li>
+                Visit any <span className="font-medium text-foreground">unvisited neighbors</span>{' '}
+                and enqueue them at the back (next frontier).
+              </li>
+            </ul>
+            {nextParent && (
+              <p className="text-xs text-muted-foreground">
+                This node was reached from <span className="font-mono">{nextParent}</span>.
+              </p>
+            )}
+          </>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            When you press start, BFS will enqueue the start node and then repeatedly dequeue the queue front.
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function BFSTraversalInfo({
+  bfsState,
+  showSimpleExplanation = true,
+}: BFSTraversalInfoProps) {
+  const nextNode = bfsState.queue.length > 0 ? bfsState.queue[0] : null;
+
+  const nextNodeLevel = (() => {
+    if (!nextNode) return null;
+    for (const [level, nodesAtLevel] of bfsState.levelNodes.entries()) {
+      if (nodesAtLevel.includes(nextNode)) return level;
+    }
+    return null;
+  })();
+
+  const nextParent = nextNode ? bfsState.parentMap.get(nextNode) : undefined;
+
   return (
     <div className="space-y-4">
+      {/* Next Step */}
+      <Card className="bg-card/50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <ArrowRight className="h-4 w-4 text-primary" />
+            Next Step
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm">
+          {bfsState.isComplete ? (
+            <p className="text-sm font-medium text-primary">✓ BFS complete!</p>
+          ) : nextNode ? (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-muted-foreground">Dequeue:</span>
+                <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-primary text-primary-foreground text-sm font-semibold">
+                  {nextNode}
+                </span>
+                {nextNodeLevel !== null && (
+                  <span className="text-xs px-2 py-0.5 rounded-md bg-muted text-muted-foreground font-mono">
+                    Level {nextNodeLevel}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {nextParent ? (
+                  <>
+                    Reached from <span className="font-mono">{nextParent}</span>
+                  </>
+                ) : (
+                  <>Start node (no parent)</>
+                )}
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground italic">
+              Select a start node and begin BFS
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       <Card className="bg-card/50">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -89,6 +192,8 @@ export function BFSTraversalInfo({ bfsState }: BFSTraversalInfoProps) {
           </div>
         </CardContent>
       </Card>
+
+      {showSimpleExplanation && <BFSSimpleExplanation bfsState={bfsState} />}
     </div>
   );
 }
